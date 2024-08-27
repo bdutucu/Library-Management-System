@@ -16,6 +16,7 @@ using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
 using LibraryManagement.v5.Authors;
+using LibraryManagement.v5.Shelves;
 
 namespace LibraryManagement.v5.EntityFrameworkCore;
 
@@ -31,6 +32,9 @@ public class v5DbContext :
 
     public DbSet<Book> Books { get; set; }
     public DbSet<Author> Authors { get; set; } // authoru ekledik
+
+    public DbSet<Shelf> Shelves { get; set; }
+
 
     #region Entities from the modules
 
@@ -89,6 +93,7 @@ public class v5DbContext :
             b.ConfigureByConvention(); //auto configure for the base class props
             b.Property(x => x.Name).IsRequired().HasMaxLength(128);
             b.HasOne<Author>().WithMany().HasForeignKey(x => x.AuthorId).IsRequired();
+            b.HasOne<Shelf>().WithMany().HasForeignKey(x => x.ShelfId).IsRequired();
         });
 
 
@@ -107,6 +112,24 @@ public class v5DbContext :
             b.HasIndex(x => x.Name);
 
         });
+
+
+        builder.Entity<Shelf>(b =>
+        {
+            b.ToTable(v5Consts.DbTablePrefix + "Shelves",
+                v5Consts.DbSchema);
+
+            b.ConfigureByConvention();
+
+            b.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(ShelfConsts.MaxNameLength);
+
+            b.HasIndex(x => x.Name);
+        });
+
+
+
 
         /* Configure your own tables/entities inside here */
 

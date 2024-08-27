@@ -9,6 +9,7 @@ public class Book : AuditedAggregateRoot<Guid>
 
     public Guid AuthorId { get; set; }
 
+    public Guid ShelfId { get; set; }
     public BookType Type { get; set; }
 
     public DateTime PublishDate { get; set; }

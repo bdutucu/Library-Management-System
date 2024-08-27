@@ -11,6 +11,7 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
+using LibraryManagement.v5.Shelves;
 
 namespace Acme.BookStore.Books;
 
@@ -22,15 +23,19 @@ public class BookAppService :
         Guid, //Primary key of the book entity
         PagedAndSortedResultRequestDto, //Used for paging/sorting
         CreateUpdateBookDto>, //Used to create/update a book
-    IBookAppService //implement the IBookAppService
+        IBookAppService //implement the IBookAppService
 {
     private readonly IAuthorRepository _authorRepository;
+    // basliyoruz
+
 
     public BookAppService(
         IRepository<Book, Guid> repository,
-        IAuthorRepository authorRepository)
+        IAuthorRepository authorRepository,
+        IShelfRepository shelfRepository)
         : base(repository)
     {
+        _shelfRepository = shelfRepository;
         _authorRepository = authorRepository;
         GetPolicyName = v5Permissions.Books.Default;
         GetListPolicyName = v5Permissions.Books.Default;
@@ -38,6 +43,11 @@ public class BookAppService :
         UpdatePolicyName = v5Permissions.Books.Edit;
         DeletePolicyName = v5Permissions.Books.Delete;
     }
+
+    private readonly IShelfRepository _shelfRepository;
+
+    
+
 
     public override async Task<BookDto> GetAsync(Guid id)
     {
@@ -47,8 +57,9 @@ public class BookAppService :
         //Prepare a query to join books and authors
         var query = from book in queryable
                     join author in await _authorRepository.GetQueryableAsync() on book.AuthorId equals author.Id
+                    join shelf in await _shelfRepository.GetQueryableAsync() on book.ShelfId equals shelf.Id
                     where book.Id == id
-                    select new { book, author };
+                    select new { book, author,shelf };
 
         //Execute the query and get the book with author
         var queryResult = await AsyncExecuter.FirstOrDefaultAsync(query);
@@ -59,6 +70,7 @@ public class BookAppService :
 
         var bookDto = ObjectMapper.Map<Book, BookDto>(queryResult.book);
         bookDto.AuthorName = queryResult.author.Name;
+        bookDto.ShelfName = queryResult.shelf.Name; // Shelf adını BookDto'ya ekliyoruz
         return bookDto;
     }
 
@@ -70,7 +82,8 @@ public class BookAppService :
         //Prepare a query to join books and authors
         var query = from book in queryable
                     join author in await _authorRepository.GetQueryableAsync() on book.AuthorId equals author.Id
-                    select new { book, author };
+                    join shelf in await _shelfRepository.GetQueryableAsync() on book.ShelfId equals shelf.Id
+                    select new { book, author,shelf };
 
         //Paging
         query = query
@@ -86,6 +99,7 @@ public class BookAppService :
         {
             var bookDto = ObjectMapper.Map<Book, BookDto>(x.book);
             bookDto.AuthorName = x.author.Name;
+            bookDto.ShelfName = x.shelf.Name;
             return bookDto;
         }).ToList();
 
@@ -123,6 +137,33 @@ public class BookAppService :
             );
         }
 
+        if (sorting.Contains("shelfName", StringComparison.OrdinalIgnoreCase))
+        {
+            return sorting.Replace(
+                "shelfName",
+                "shelf.Name",
+                StringComparison.OrdinalIgnoreCase
+            );
+        }
+
+
         return $"book.{sorting}";
     }
+
+        public async Task<ListResultDto<ShelfLookupDto>> GetShelfLookupAsync()
+    {
+        // Shelf'leri alıyoruz
+        var shelves = await _shelfRepository.GetListAsync();
+
+        // Shelf'leri ShelfLookupDto'ya map ediyoruz ve döndürüyoruz
+        return new ListResultDto<ShelfLookupDto>(
+            ObjectMapper.Map<List<Shelf>, List<ShelfLookupDto>>(shelves)
+        );
+    }
+
+
+
+
+
+
 }

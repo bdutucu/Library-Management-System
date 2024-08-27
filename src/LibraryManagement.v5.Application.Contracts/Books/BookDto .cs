@@ -8,6 +8,10 @@ public class BookDto : AuditedEntityDto<Guid>
 
     public Guid AuthorId { get; set; }
     public string AuthorName { get; set; }
+
+    public Guid ShelfId { get; set; }
+    public string ShelfName { get; set; }
+
     public string Name { get; set; }
 
     public BookType Type { get; set; }

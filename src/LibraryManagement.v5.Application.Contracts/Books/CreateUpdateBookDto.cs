@@ -9,6 +9,8 @@ public class CreateUpdateBookDto
 
     public Guid AuthorId { get; set; }
 
+    public Guid ShelfId { get; set; }
+
 
     [Required]
     [StringLength(128)]

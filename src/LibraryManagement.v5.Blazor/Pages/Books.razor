@@ -23,11 +23,11 @@
             </Column>
             <Column ColumnSize="ColumnSize.IsAuto">
 
-               @*
+               
 
-@if (HasCreatePermission)
+               @if (HasCreatePermission)
 
-               *@ 
+               
 
                 {
                     <Button Color="Color.Primary"
@@ -88,6 +88,12 @@
                                 Field="@nameof(BookDto.AuthorName)"
                                 Caption="@L["Author"]"></DataGridColumn>
 
+                            @* bunu ekledik author icin *@
+
+                        <DataGridColumn TItem="BookDto"
+                                Field="@nameof(BookDto.ShelfName)"
+                                Caption="@L["Shelf"]"></DataGridColumn>
+                @* bunu ekledik Shelf icin *@
                
 
 
@@ -166,6 +172,19 @@
                             }
                         </Select>
                     </Field>
+
+                    <Field>
+                        <FieldLabel>@L["Shelf"]</FieldLabel>
+                        <Select TValue="Guid" @bind-SelectedValue="@NewEntity.ShelfId">
+                            @foreach (var shelf in shelfList)
+                            {
+                                <SelectItem TValue="Guid" Value="@shelf.Id">
+                                    @shelf.Name
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
 
                     
 
@@ -251,7 +270,18 @@
                         </Select>
                     </Field>
 
-                    
+                    <Field>
+                        <FieldLabel>@L["Shelf"]</FieldLabel>
+                        <Select TValue="Guid" @bind-SelectedValue="@EditingEntity.ShelfId">
+                            @foreach (var shelf in shelfList)
+                            {
+                                <SelectItem TValue="Guid" Value="@shelf.Id">
+                                    @shelf.Name
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+
                    
 
 
@@ -322,6 +352,8 @@
     private string searchText = "";
     private IReadOnlyList<BookDto> filteredBooks = Array.Empty<BookDto>();
     IReadOnlyList<AuthorLookupDto> authorList = Array.Empty<AuthorLookupDto>();
+    IReadOnlyList<ShelfLookupDto> shelfList = Array.Empty<ShelfLookupDto>();
+
 
     public Books() // Constructor
     {
@@ -344,10 +376,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await SetPermissionsAsync();
+        await SetPermissionsAsync(); // bunu kaldirabilirsin belki
         await LoadBooksAsync();
         await base.OnInitializedAsync();
         authorList = (await AppService.GetAuthorLookupAsync()).Items;
+        shelfList = (await AppService.GetShelfLookupAsync()).Items;
     }
 
 
@@ -380,8 +413,14 @@
             throw new UserFriendlyException(message: L["AnAuthorIsRequiredForCreatingBook"]);
         }
 
+        if (!shelfList.Any())
+        {
+            throw new UserFriendlyException(message: L["AShelfIsRequiredForCreatingBook"]);
+        }
+
         await base.OpenCreateModalAsync();
         NewEntity.AuthorId = authorList.First().Id;
+        NewEntity.ShelfId = shelfList.First().Id;
     }
 
 
