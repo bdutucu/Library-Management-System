@@ -4,6 +4,7 @@ using LibraryManagement.v5.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace LibraryManagement.v5.Migrations
 {
     [DbContext(typeof(v5DbContext))]
-    partial class v5DbContextModelSnapshot : ModelSnapshot
+    [Migration("20240827071131_Added_ShelfId_To_Book")]
+    partial class Added_ShelfId_To_Book
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

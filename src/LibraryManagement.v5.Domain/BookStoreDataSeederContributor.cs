@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using LibraryManagement.v5.Authors;
 using LibraryManagement.v5.Authors;
 using LibraryManagement.v5.Books;
+using LibraryManagement.v5.Shelves;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
@@ -15,15 +16,21 @@ public class BookStoreDataSeederContributor
     private readonly IRepository<Book, Guid> _bookRepository;
     private readonly IAuthorRepository _authorRepository;
     private readonly AuthorManager _authorManager;
+    private readonly ShelfManager _shelfManager;
+    private readonly IShelfRepository _shelfRepository;
 
     public BookStoreDataSeederContributor(
         IRepository<Book, Guid> bookRepository,
+        IShelfRepository shelfRepository,
+        ShelfManager shelfManager,
         IAuthorRepository authorRepository,
         AuthorManager authorManager)
     {
         _bookRepository = bookRepository;
         _authorRepository = authorRepository;
         _authorManager = authorManager;
+        _shelfManager = shelfManager;
+        _shelfRepository = shelfRepository;
     }
 
     public async Task SeedAsync(DataSeedContext context)
@@ -32,6 +39,26 @@ public class BookStoreDataSeederContributor
         {
             return;
         }
+
+
+
+        var a100 = await _shelfRepository.InsertAsync(
+            await _shelfManager.CreateAsync(
+                "a100",
+                3,
+                "Topkapi Library"
+            )
+        );
+
+        var a200 = await _shelfRepository.InsertAsync(
+            await _shelfManager.CreateAsync(
+                 "a200",
+                 2,
+                 "Orhan Pamuk Library"
+            )
+        );
+
+
 
         var orwell = await _authorRepository.InsertAsync(
             await _authorManager.CreateAsync(
@@ -52,6 +79,7 @@ public class BookStoreDataSeederContributor
         await _bookRepository.InsertAsync(
             new Book
             {
+                ShelfId=a100.Id,
                 AuthorId = orwell.Id, // SET THE AUTHOR
                 Name = "1984",
                 Type = BookType.Dystopia,
@@ -64,6 +92,7 @@ public class BookStoreDataSeederContributor
         await _bookRepository.InsertAsync(
             new Book
             {
+                ShelfId=a200.Id,
                 AuthorId = douglas.Id, // SET THE AUTHOR
                 Name = "The Hitchhiker's Guide to the Galaxy",
                 Type = BookType.ScienceFiction,

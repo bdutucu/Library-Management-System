@@ -7,6 +7,7 @@ using Volo.Abp.UI.Navigation;
 using Volo.Abp.SettingManagement.Blazor.Menus;
 using Volo.Abp.TenantManagement.Blazor.Navigation;
 using Volo.Abp.Identity.Blazor;
+using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace LibraryManagement.v5.Blazor.Menus;
 
@@ -53,15 +54,21 @@ public class v5MenuContributor : IMenuContributor
 
         context.Menu.AddItem(
          new ApplicationMenuItem(
-             "BooksStore",
+             "Library",
              l["Menu:v5"],
              icon: "fa fa-book"
          ).AddItem(
              new ApplicationMenuItem(
-                 "BooksStore.Books",
-                 l["Menu:Books"],
+                 "Library.SearchBooks",
+                 l["Menu:SearchBooks"],
                  url: "/books"
              ).RequirePermissions(v5Permissions.Books.Default) 
+         ).AddItem(
+             new ApplicationMenuItem(
+                 "Library.SearchShelves",
+                 l["Menu:SearchShelves"],
+        url: "/shelves"
+             ).RequirePermissions(v5Permissions.Books.Default)
          )
         );
 
@@ -71,6 +78,14 @@ public class v5MenuContributor : IMenuContributor
                 "BooksStore.Authors",
                 l["Menu:Authors"],
                 url: "/authors"
+            ));
+        }
+
+        {
+            context.Menu.AddItem(new ApplicationMenuItem(
+                "BooksStore.Shelves",
+                l["Menu:Shelves"],
+                url: "/shelves"
             ));
         }
 

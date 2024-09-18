@@ -4,6 +4,7 @@ using LibraryManagement.v5.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace LibraryManagement.v5.Migrations
 {
     [DbContext(typeof(v5DbContext))]
-    partial class v5DbContextModelSnapshot : ModelSnapshot
+    [Migration("20240826131523_Added_Shelves")]
+    partial class Added_Shelves
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -138,17 +141,12 @@ namespace LibraryManagement.v5.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ShelfId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
-
-                    b.HasIndex("ShelfId");
 
                     b.ToTable("AppBooks", (string)null);
                 });
@@ -2097,12 +2095,6 @@ namespace LibraryManagement.v5.Migrations
                     b.HasOne("LibraryManagement.v5.Authors.Author", null)
                         .WithMany()
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LibraryManagement.v5.Shelves.Shelf", null)
-                        .WithMany()
-                        .HasForeignKey("ShelfId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

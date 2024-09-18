@@ -2,8 +2,9 @@
   "Culture": "en",
   "Texts": {
     "AppName": "SmartLib v5",
-    "Menu:v2": "Library",
-    "Menu:Search Books": "Search Books",
+    "Menu:v5": "Library",
+    "Menu:SearchBooks": "Search Books",
+    "Menu:SearchShelves": "Search Shelves",
     "Actions": "Actions",
     "Close": "Close",
     "Delete": "Delete",
@@ -60,7 +61,10 @@
     "Shelves": "Shelves",
     "ShelfDeletionConfirmationMessage": "Are you sure to delete the shelf '{0}'?",
     "Number": "Number",
-    "NewShelf": "New shelf"
+    "NewShelf": "New shelf",
+
+    "AnAuthorIsRequiredForCreatingBook": "An author is required to create a book",
+    "AShelfIsRequiredForCreatingBook": "A Shelf is required to create a book"
 
 
   }

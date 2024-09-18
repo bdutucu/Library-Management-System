@@ -24,6 +24,12 @@ public class v5PermissionDefinitionProvider : PermissionDefinitionProvider
         authorsPermission.AddChild(v5Permissions.Authors.Create, L("Permission:Authors.Create"));
         authorsPermission.AddChild(v5Permissions.Authors.Edit, L("Permission:Authors.Edit"));
         authorsPermission.AddChild(v5Permissions.Authors.Delete, L("Permission:Authors.Delete"));
+
+
+        var shelvesPermission = myGroup.AddPermission(v5Permissions.Shelves.Default, L("Permission:Shelves"));
+        shelvesPermission.AddChild(v5Permissions.Shelves.Create, L("Permission:Shelves.Create"));
+        shelvesPermission.AddChild(v5Permissions.Shelves.Edit, L("Permission:Shelves.Edit"));
+        shelvesPermission.AddChild(v5Permissions.Shelves.Delete, L("Permission:Shelves.Delete"));
     }
 
     private static LocalizableString L(string name)
